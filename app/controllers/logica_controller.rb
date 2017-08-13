@@ -3,17 +3,14 @@ require 'logica/logicaNenLinea'
 # Controlador de la logica del juego
 # Inicia un nuevo juego, realiza los movimientos y retorna el estado del juego
 class LogicaController < ApplicationController
-
-    # Inicializa los atributos de la clase
-    def initialize
-         @game = LogicaNenLinea.new
-    end
+    # Logica del juego
+    @@game = LogicaNenLinea.new
 
     # Muestra los endpoints de este controlador
     def index
         render json: {status: 'SUCCESS',
                       endpoints: ["get /logica/mover/:columna",
-                                  "post /logica/new/:tam"]
+                                  "post /logica/new/:tamF/:n2w | Tamaño de la fila, seguidas para ganar "]
                      }, status: :ok
     end
 
@@ -21,23 +18,28 @@ class LogicaController < ApplicationController
     def mover
         begin
             columna = Integer(params[:columna])
-            @game.play(columna)
-            render json: {status: 'SUCCESS','game_state'=> @game.gameState,
-                          'fichas_ganadoras' => @game.winnerSteps}, status: :ok
-        rescue
+            @@game.play(columna)
+            render json: {status: 'SUCCESS','game_state'=> @@game.gameState,
+                          'fichas_ganadoras' => @@game.winnerSteps,
+                          'movimientos' => @@game.performedSteps}, status: :ok
+        rescue Exception => e
+            puts(e)
             render json: {status: 'ERROR', message: 'parametros invalidos'}, status: :error
         end
     end
 
     def newGame
         begin
-            tamFila = Integer(params[:tam])
-            n2win = Integer(params[:n_to_win])
-            @game.new(tamFila * tamFila, tamFila, n2win)
+            tamFila = Integer(params[:tamF])
+            tamTablero = tamFila * tamFila
+            n2Win = Integer(params[:n2w])
 
-            render json: {status: 'SUCCESS', 'game_state' => @game.gameState, message: 'Nueva Partida'}, status: :ok
-        rescue
-
+            @@game = LogicaNenLinea.new(tamTablero, tamFila, n2Win)
+            render json: {status: 'SUCCESS', 'game_state' => @@game.gameState, message: 'Nueva Partida',
+                          tamTablero: tamTablero, tamFila: tamFila, seguidas_para_ganar: n2Win}, status: :ok
+        rescue Exception => e
+            puts(e)
+            render json: {status: 'ERROR', message: 'parametros invalidos'}, status: :error
         end
     end
 end
