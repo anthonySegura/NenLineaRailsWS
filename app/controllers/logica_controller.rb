@@ -10,7 +10,7 @@ class LogicaController < ApplicationController
     def index
         render json: {status: 'SUCCESS',
                       endpoints: ["get /logica/mover/:columna",
-                                  "post /logica/new/:tamF/:n2w | Tamaño de la fila, seguidas para ganar "]
+                                  "get /logica/new/:tamF/:n2w | Tamaño de la fila, seguidas para ganar | GET por mientras, cambiar despues se cambia"]
                      }, status: :ok
     end
 
