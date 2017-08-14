@@ -10,7 +10,7 @@ class LogicaController < ApplicationController
     def index
         render json: {status: 'SUCCESS',
                       endpoints: ["get /logica/mover/:columna",
-                                  "get /logica/new/:tamF/:n2w | Tamaño de la fila, seguidas para ganar | GET por mientras, cambiar despues se cambia"]
+                                  "get /logica/new/:tamF/:n2w | Tamaño de la fila, seguidas para ganar | GET por mientras, despues se cambia"]
                      }, status: :ok
     end
 
@@ -21,19 +21,22 @@ class LogicaController < ApplicationController
             @@game.play(columna)
             render json: {status: 'SUCCESS','game_state'=> @@game.gameState,
                           'fichas_ganadoras' => @@game.winnerSteps,
-                          'movimientos' => @@game.performedSteps}, status: :ok
+                          'movimientos' => @@game.performedSteps,
+                          'turno' => @@game.playerTurn}, status: :ok
         rescue Exception => e
             puts(e)
             render json: {status: 'ERROR', message: 'parametros invalidos'}, status: :error
         end
     end
 
+    # Crea una nueva partida del juego TODO agregar opcion para partida contra el jugador automatico
     def newGame
         begin
             tamFila = Integer(params[:tamF])
             tamTablero = tamFila * tamFila
             n2Win = Integer(params[:n2w])
 
+            # Se crea una nueva instancia del juego
             @@game = LogicaNenLinea.new(tamTablero, tamFila, n2Win)
             render json: {status: 'SUCCESS', 'game_state' => @@game.gameState, message: 'Nueva Partida',
                           tamTablero: tamTablero, tamFila: tamFila, seguidas_para_ganar: n2Win}, status: :ok

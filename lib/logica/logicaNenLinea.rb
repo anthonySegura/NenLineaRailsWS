@@ -11,7 +11,7 @@ PLAYING, X_WINS, O_WINS, TIE = 'Playing', 'X WINS', 'O WINS', 'TIE'
 # TODO refactorizar
 class LogicaNenLinea
     # Getters para los atributos de lectura
-    attr_reader :gameState, :gameTable, :winnerSteps, :performedSteps
+    attr_reader :gameState, :gameTable, :winnerSteps, :performedSteps, :playerTurn
     # Constructor de la clase
     def initialize(tableSize = 64, rowSize = 8, stepsToWin = 4)
         @gameTable = []
@@ -244,8 +244,8 @@ class LogicaNenLinea
             @gameState = (@playerTurn == PLAYER_X) ? X_WINS : O_WINS
         else
             @gameState = PLAYING
+            changeTurn
         end
-        changeTurn
     end
 end
 

@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     # Mover ficha
     get '/logica/mover/:columna' => 'logica#mover'
 
+    # TODO agregar parametro para crear partida contra el jugador automatico
     # Iniciar juego, GET por mientras, se deberia pasar a POST o algo asi
     get '/logica/new/:tamF/:n2w' => 'logica#newGame'
 
