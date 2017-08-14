@@ -3,7 +3,7 @@ require 'logica/logicaNenLinea'
 # Controlador de la logica del juego
 # Inicia un nuevo juego, realiza los movimientos y retorna el estado del juego
 class LogicaController < ApplicationController
-    # Logica del juego
+    # Juego por defecto
     @@game = LogicaNenLinea.new
 
     # Muestra los endpoints de este controlador
@@ -19,13 +19,12 @@ class LogicaController < ApplicationController
         begin
             columna = Integer(params[:columna])
             @@game.play(columna)
-            render json: {status: 'SUCCESS','game_state'=> @@game.gameState,
+            render json: {status: 'SUCCESS','game_state' => @@game.gameState,
                           'fichas_ganadoras' => @@game.winnerSteps,
                           'movimientos' => @@game.performedSteps,
                           'turno' => @@game.playerTurn}, status: :ok
         rescue Exception => e
-            puts(e)
-            render json: {status: 'ERROR', message: 'parametros invalidos'}, status: :error
+            render json: {status: 'ERROR', 'message' => e}, status: :error
         end
     end
 
@@ -36,13 +35,12 @@ class LogicaController < ApplicationController
             tamTablero = tamFila * tamFila
             n2Win = Integer(params[:n2w])
 
-            # Se crea una nueva instancia del juego
+            # Se crea una nueva instancia del juego personalizada
             @@game = LogicaNenLinea.new(tamTablero, tamFila, n2Win)
             render json: {status: 'SUCCESS', 'game_state' => @@game.gameState, message: 'Nueva Partida',
                           tamTablero: tamTablero, tamFila: tamFila, seguidas_para_ganar: n2Win}, status: :ok
         rescue Exception => e
-            puts(e)
-            render json: {status: 'ERROR', message: 'parametros invalidos'}, status: :error
+            render json: {status: 'ERROR', 'message' => e}, status: :error
         end
     end
 end

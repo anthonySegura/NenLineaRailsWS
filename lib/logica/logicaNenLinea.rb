@@ -239,12 +239,16 @@ class LogicaNenLinea
     # Metodo para realizar cada movimiento (Jugador o Maquina)
     # Recibe la columna del tablero
     def play(column)
-        if verifyRow(putCard(column)) != 'no hay nada'
-            puts('Gano ' + @playerTurn)
-            @gameState = (@playerTurn == PLAYER_X) ? X_WINS : O_WINS
-        else
-            @gameState = PLAYING
-            changeTurn
+        begin
+            if verifyRow(putCard(column)) != 'no hay nada'
+                puts('Gano ' + @playerTurn)
+                @gameState = (@playerTurn == PLAYER_X) ? X_WINS : O_WINS
+            else
+                @gameState = PLAYING
+                changeTurn
+            end
+        rescue
+            raise 'La columna indicada no coincide con el tamaño del tablero'
         end
     end
 end
