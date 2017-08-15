@@ -19,10 +19,14 @@ class LogicaController < ApplicationController
         begin
             columna = Integer(params[:columna])
             @@game.play(columna)
-            render json: {'status' => 'SUCCESS','game_state' => @@game.gameState,
-                          'fichas_ganadoras' => @@game.winnerSteps,
-                          'movimientos' => @@game.performedSteps,
-                          'turno' => @@game.playerTurn}, status => 'ok'
+
+            response = {:status => 'ok', :game_state => @@game.gameState,
+                        :fichas_ganadoras => @@game.winnerSteps,
+                        :movimientos => @@game.performedSteps,
+                        :turno => @@game.playerTurn
+                        }
+
+            render :json => response
         rescue Exception => e
             render json: {status: 'ERROR', 'message' => e}, status => 'error'
         end
