@@ -11,7 +11,7 @@ class LogicaController < ApplicationController
         render json: {status: 'SUCCESS',
                       endpoints: ["get /logica/mover/:columna",
                                   "get /logica/new/:tamF/:n2w | Tamaño de la fila, seguidas para ganar | GET por mientras, despues se cambia"]
-                     }, status: :ok
+                     }, status => 'ok'
     end
 
     # Realiza el movimiento en la columna indicada y devuelve el estado del juego
@@ -22,9 +22,9 @@ class LogicaController < ApplicationController
             render json: {status: 'SUCCESS','game_state' => @@game.gameState,
                           'fichas_ganadoras' => @@game.winnerSteps,
                           'movimientos' => @@game.performedSteps,
-                          'turno' => @@game.playerTurn}, status: :ok
+                          'turno' => @@game.playerTurn}, status => 'ok'
         rescue Exception => e
-            render json: {status: 'ERROR', 'message' => e}, status: :error
+            render json: {status: 'ERROR', 'message' => e}, status => 'error'
         end
     end
 
@@ -38,9 +38,9 @@ class LogicaController < ApplicationController
             # Se crea una nueva instancia del juego personalizada
             @@game = LogicaNenLinea.new(tamTablero, tamFila, n2Win)
             render json: {status: 'SUCCESS', 'game_state' => @@game.gameState, message: 'Nueva Partida',
-                          tamTablero: tamTablero, tamFila: tamFila, seguidas_para_ganar: n2Win}, status: :ok
+                          tamTablero: tamTablero, tamFila: tamFila, seguidas_para_ganar: n2Win}, status => 'ok'
         rescue Exception => e
-            render json: {status: 'ERROR', 'message' => e}, status: :error
+            render json: {status: 'ERROR', 'message' => e}, status => 'error'
         end
     end
 end
