@@ -18,12 +18,13 @@ class LogicaController < ApplicationController
     def mover
         begin
             columna = Integer(params[:columna])
-            @@game.play(columna)
-
+            fila, _columna = @@game.play(columna)
             response = {:status => 'ok', :game_state => @@game.gameState,
                         :fichas_ganadoras => @@game.winnerSteps,
                         :movimientos => @@game.performedSteps,
-                        :turno => @@game.playerTurn
+                        :turno => @@game.playerTurn,
+                        :fila => fila,
+                        :columna => _columna
                         }
 
             render :json => response

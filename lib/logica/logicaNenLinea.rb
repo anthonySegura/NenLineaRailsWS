@@ -66,9 +66,9 @@ class LogicaNenLinea
     end
 
     def winnerInLine(initialPosition, finalPosition, player)
-        # if finalPosition.rowPosition >= @rowSize || finalPosition.columnPosition >= @rowSize || finalPosition.rowPosition < 0 || finalPosition.columnPosition < 0
-        #     return false
-        # end
+        if finalPosition.rowPosition >= @rowSize || finalPosition.columnPosition >= @rowSize || finalPosition.rowPosition < 0 || finalPosition.columnPosition < 0
+             return false
+         end
 
         # Si la busqueda es en la misma fila, entonces hay que buscar a la izquirda o a la derecha
         if finalPosition.rowPosition == initialPosition.rowPosition
@@ -240,13 +240,15 @@ class LogicaNenLinea
     # Recibe la columna del tablero
     def play(column)
         begin
-            if verifyRow(putCard(column)) != 'no hay nada'
+            posJugada = putCard(column)
+            if verifyRow(posJugada) != 'no hay nada'
                 puts('Gano ' + @playerTurn)
                 @gameState = (@playerTurn == PLAYER_X) ? X_WINS : O_WINS
             else
                 @gameState = PLAYING
                 changeTurn
             end
+            return posJugada.rowPosition, posJugada.columnPosition
         rescue
             raise 'La columna indicada no coincide con el tamaño del tablero'
         end
