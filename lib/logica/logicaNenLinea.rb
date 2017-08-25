@@ -218,24 +218,12 @@ class LogicaNenLinea
 
 
     def verifyRow(lastPlayed)
-        # evaluatedRow = lastPlayed.rowPosition
-        # initialColumn = @rowSize * evaluatedRow
-        #
-        # for column in (initialColumn...initialColumn + @rowSize)
-        #     if @gameTable[transformCoordToArrayPosition(evaluatedRow, column)] != VACIO
-        #         originalColumn = column - evaluatedRow * @rowSize
-        #         result = verifyWinner(Coordenada.new(evaluatedRow, originalColumn))
-        #         if result != 'no win'
-        #             return result
-        #         end
-        #     end
-        # end
-        # return 'no hay nada'
+
         row = lastPlayed.rowPosition
         column = lastPlayed.columnPosition
         result = ''
         # Verificar las coordenadas a la izquierda de la ultima jugada
-        if isAvalidCoord(Coordenada.new(lastPlayed.rowPosition, column - @stepsToWin - 1))
+        if isAvalidCoord(Coordenada.new(lastPlayed.rowPosition, column - (@stepsToWin - 1)))
             col = column
             while col >= column - (@stepsToWin - 1)
                 result = verifyWinner(Coordenada.new(row, col))
@@ -246,7 +234,7 @@ class LogicaNenLinea
             end
         end
         # Verificar los puntos a la derecha de la ultima jugada
-        if isAvalidCoord(Coordenada.new(lastPlayed.rowPosition, column + @stepsToWin - 1))
+        if isAvalidCoord(Coordenada.new(lastPlayed.rowPosition, column + (@stepsToWin - 1)))
             col = column
             while col <= column + (@stepsToWin - 1)
                 result = verifyWinner(Coordenada.new(row, col))
@@ -268,7 +256,7 @@ class LogicaNenLinea
             end
         end
         # Verificar los puntos diagonales arriba a la izquierda de la ultima jugada
-        if isAvalidCoord(Coordenada.new(row - (@stepsToWin - 1), column - @stepsToWin - 1))
+        if isAvalidCoord(Coordenada.new(row - (@stepsToWin - 1), column - (@stepsToWin - 1)))
             r = row - (@stepsToWin - 1)
             col = column - (@stepsToWin - 1)
             while r <= row && col <= column
