@@ -319,6 +319,8 @@ class LogicaNenLinea
                 col -= 1
             end
         end
+
+        return 'no hay nada'
     end
 
     def imprimirTablero
