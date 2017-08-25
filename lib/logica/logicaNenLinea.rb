@@ -65,11 +65,19 @@ class LogicaNenLinea
         return @rowSize * row + column
     end
 
-    def winnerInLine(initialPosition, finalPosition, player)
-        if finalPosition.rowPosition >= @rowSize || finalPosition.columnPosition >= @rowSize || finalPosition.rowPosition < 0 || finalPosition.columnPosition < 0
-             return false
+    def isAvalidCoord(coor)
+         if coor.rowPosition >= @rowSize || coor.columnPosition >= @rowSize || coor.rowPosition < 0 || coor.columnPosition < 0
+              return false
+         else
+             return true
          end
 
+    end
+
+    def winnerInLine(initialPosition, finalPosition, player)
+        if ! isAvalidCoord(finalPosition)
+            return false
+        end
         # Si la busqueda es en la misma fila, entonces hay que buscar a la izquirda o a la derecha
         if finalPosition.rowPosition == initialPosition.rowPosition
             if finalPosition.columnPosition > initialPosition.columnPosition
@@ -210,19 +218,107 @@ class LogicaNenLinea
 
 
     def verifyRow(lastPlayed)
-        evaluatedRow = lastPlayed.rowPosition
-        initialColumn = @rowSize * evaluatedRow
-
-        for column in (initialColumn...initialColumn + @rowSize)
-            if @gameTable[transformCoordToArrayPosition(evaluatedRow, column)] != VACIO
-                originalColumn = column - evaluatedRow * @rowSize
-                result = verifyWinner(Coordenada.new(evaluatedRow, originalColumn))
+        # evaluatedRow = lastPlayed.rowPosition
+        # initialColumn = @rowSize * evaluatedRow
+        #
+        # for column in (initialColumn...initialColumn + @rowSize)
+        #     if @gameTable[transformCoordToArrayPosition(evaluatedRow, column)] != VACIO
+        #         originalColumn = column - evaluatedRow * @rowSize
+        #         result = verifyWinner(Coordenada.new(evaluatedRow, originalColumn))
+        #         if result != 'no win'
+        #             return result
+        #         end
+        #     end
+        # end
+        # return 'no hay nada'
+        row = lastPlayed.rowPosition
+        column = lastPlayed.columnPosition
+        result = ''
+        # Verificar las coordenadas a la izquierda de la ultima jugada
+        if isAvalidCoord(Coordenada.new(lastPlayed.rowPosition, column - @stepsToWin - 1))
+            col = column
+            while col >= column - (@stepsToWin - 1)
+                result = verifyWinner(Coordenada.new(row, col))
                 if result != 'no win'
                     return result
                 end
+                col -= 1
             end
         end
-        return 'no hay nada'
+        # Verificar los puntos a la derecha de la ultima jugada
+        if isAvalidCoord(Coordenada.new(lastPlayed.rowPosition, column + @stepsToWin - 1))
+            col = column
+            while col <= column + (@stepsToWin - 1)
+                result = verifyWinner(Coordenada.new(row, col))
+                if result != 'no win'
+                    return result
+                end
+                col += 1
+            end
+        end
+        # Verificar los puntos por debajo de la ultima jugada
+        if isAvalidCoord(Coordenada.new(row + (@stepsToWin - 1), column))
+            r = row
+            while r <= row + (@stepsToWin - 1)
+                result = verifyWinner(Coordenada.new(r, column))
+                if result != 'no win'
+                    return result
+                end
+                r += 1
+            end
+        end
+        # Verificar los puntos diagonales arriba a la izquierda de la ultima jugada
+        if isAvalidCoord(Coordenada.new(row - (@stepsToWin - 1), column - @stepsToWin - 1))
+            r = row - (@stepsToWin - 1)
+            col = column - (@stepsToWin - 1)
+            while r <= row && col <= column
+                result = verifyWinner(Coordenada.new(r, col))
+                if result != 'no win'
+                    return result
+                end
+                r += 1
+                col += 1
+            end
+        end
+        # Verifica los puntos diagonales arriba a la derecha de la ultima jugada
+        if isAvalidCoord(Coordenada.new(row - (@stepsToWin - 1), column + (@stepsToWin - 1)))
+            r = row - (@stepsToWin - 1)
+            col = column + (@stepsToWin - 1)
+            while r <= row && col >= column
+                result = verifyWinner(Coordenada.new(r, col))
+                if result != 'no win'
+                    return result
+                end
+                r += 1
+                col -= 1
+            end
+        end
+        # Verificar los puntos diagonales debajo a la izquierda de la ultima jugada
+        if isAvalidCoord(Coordenada.new(row - (@stepsToWin - 1), column + (@stepsToWin - 1)))
+            r = row + (@stepsToWin - 1)
+            col = column - (@stepsToWin - 1)
+            while r >= row && col <= column
+                result = verifyWinner(Coordenada.new(r, col))
+                if result != 'no win'
+                    return result
+                end
+                r -= 1
+                col += 1
+            end
+        end
+        # Verificar los puntos diagonales debajo a la derecha de la ultima jugada
+        if isAvalidCoord(Coordenada.new(row + (@stepsToWin - 1), column + (@stepsToWin - 1)))
+            r = row + (@stepsToWin - 1)
+            col = column + (@stepsToWin - 1)
+            while r >= row && col >= column
+                result = verifyWinner(Coordenada.new(r, col))
+                if result != 'no win'
+                    return result
+                end
+                r -= 1
+                col -= 1
+            end
+        end
     end
 
     def imprimirTablero
