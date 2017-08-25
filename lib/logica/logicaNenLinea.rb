@@ -294,7 +294,7 @@ class LogicaNenLinea
             end
         end
         # Verificar los puntos diagonales debajo a la izquierda de la ultima jugada
-        if isAvalidCoord(Coordenada.new(row - (@stepsToWin - 1), column + (@stepsToWin - 1)))
+        if isAvalidCoord(Coordenada.new(row + (@stepsToWin - 1), column - (@stepsToWin - 1)))
             r = row + (@stepsToWin - 1)
             col = column - (@stepsToWin - 1)
             while r >= row && col <= column
