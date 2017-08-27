@@ -1,8 +1,22 @@
 Rails.application.routes.draw do
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+
+  resources :users
+    # Rutas del controlador de los usuarios
+    get 'user/index'
+
+    get 'user/show'
+
+    get 'user/new'
+
+    get 'user/create'
+
+    get 'user/edit'
+
+    get 'user/update'
+
+    get 'user/destroy'
 
     # Rutas del controlador logica
-
     # Muestra los endpoints del controlador logica
     get '/logica' => 'logica#index'
 
