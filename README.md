@@ -1,6 +1,6 @@
 # README
 
-# Base de Datos : mySQL
+# Base de Datos : PostgreSQL
 
 # Para correr local la primera vez
 
