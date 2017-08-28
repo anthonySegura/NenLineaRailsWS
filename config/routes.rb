@@ -1,20 +1,14 @@
 Rails.application.routes.draw do
 
-  resources :users
-    # Rutas del controlador de los usuarios
-    get 'user/index'
+  get 'user/index'
 
-    get 'user/show'
+  get 'user/show'
 
-    get 'user/new'
+  post 'user/create'
 
-    get 'user/create'
+  post 'user/update'
 
-    get 'user/edit'
-
-    get 'user/update'
-
-    get 'user/destroy'
+  post 'user/delete'
 
     # Rutas del controlador logica
     # Muestra los endpoints del controlador logica
