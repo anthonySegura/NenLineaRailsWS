@@ -396,7 +396,7 @@ class LogicaNenLinea
         while r >= row
             j = coord.columnPosition
             while j >= column
-                result = verifyWinner(r, j)
+                result = verifyWinner(Coordenada.new(r,j))
                 if result != 'no win'
                     return result
                 end
@@ -431,8 +431,8 @@ class LogicaNenLinea
                 changeTurn
             end
             return posJugada.rowPosition, posJugada.columnPosition
-        rescue
-            raise 'La columna indicada no coincide con el tamaño del tablero'
+        rescue Exception => e
+            raise e
         end
     end
 end

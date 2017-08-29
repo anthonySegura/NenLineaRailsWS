@@ -18,6 +18,7 @@ class LogicaController < ApplicationController
     def mover
         begin
             columna = Integer(params[:columna])
+            puts(columna)
             fila, _columna = @@game.play(columna)
             response = {:status => 'ok', :game_state => @@game.gameState,
                         :fichas_ganadoras => @@game.winnerSteps,
