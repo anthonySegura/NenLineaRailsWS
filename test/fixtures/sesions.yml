@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  n_partidas: 1
+  n2win: 1
+  tiempo_jugada: 1
+  tam_tablero: 1
+
+two:
+  n_partidas: 1
+  n2win: 1
+  tiempo_jugada: 1
+  tam_tablero: 1

@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :sesions
   get 'user/index'
 
   get 'user/show'
