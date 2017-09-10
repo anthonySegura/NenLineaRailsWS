@@ -10,16 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170902234204) do
+ActiveRecord::Schema.define(version: 20170910202730) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "sesions", force: :cascade do |t|
     t.integer "n_partidas"
-    t.integer "n2win"
-    t.integer "tiempo_jugada"
     t.integer "tam_tablero"
+    t.integer "tiempo_espera"
+    t.integer "n2win"
+    t.string "tipo"
+    t.string "estado"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

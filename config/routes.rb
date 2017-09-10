@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
 
-  resources :sesions
+  # Ruta para los websockets
+  mount ActionCable.server => '/cable'
+
+  # Rutas para el crud de usuarios
   get 'user/index'
 
   get 'user/show'
