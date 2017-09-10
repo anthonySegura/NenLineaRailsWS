@@ -7,7 +7,6 @@ class CreateUsers < ActiveRecord::Migration[5.1]
       t.string :password
       t.integer :puntuacion
       t.integer :categoria
-
       t.timestamps
     end
   end

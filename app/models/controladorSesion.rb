@@ -15,7 +15,7 @@ class ControladorSesion
         @game = LogicaNenLinea.new(tamTablero, tamFila, n2win)
 
         ActionCable.server.broadcast "sesion_channel_#{@session_id}" , gameState: @game.gameState,
-                                          status: 'Nueva Partida',
+                                          message: 'Nueva Partida',
                                           tamTablero: tamTablero,
                                           tamFila: tamFila,
                                           n2win: n2win,

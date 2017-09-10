@@ -7,7 +7,6 @@ class CreateSesions < ActiveRecord::Migration[5.1]
       t.integer :n2win
       t.string :tipo
       t.string :estado
-
       t.timestamps
     end
   end
