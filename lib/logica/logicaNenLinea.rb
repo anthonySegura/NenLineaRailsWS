@@ -4,7 +4,7 @@
 require_relative 'coordenada'
 # Constantes Globales
 # Jugadores
-PLAYER_X, PLAYER_O, VACIO = 'X', 'O', '-'
+VACIO = '-'
 # Estados del juego
 PLAYING, X_WINS, O_WINS, TIE = 'Playing', 'X WINS', 'O WINS', 'TIE'
 
@@ -13,7 +13,7 @@ class LogicaNenLinea
     # Getters para los atributos de lectura
     attr_reader :gameState, :gameTable, :winnerSteps, :performedSteps, :playerTurn, :stepsToWin
     # Constructor de la clase
-    def initialize(tableSize = 64, rowSize = 8, stepsToWin = 4)
+    def initialize(tableSize = 64, rowSize = 8, stepsToWin = 4, player_x = 'X', player_o = 'O')
         @gameTable = []
         @playerTurn
         @performedSteps
@@ -22,7 +22,8 @@ class LogicaNenLinea
         @tableSize = tableSize
         @rowSize = rowSize
         @stepsToWin = stepsToWin
-
+        @player_x = player_x
+        @player_o = player_o
         startGame
     end
 
@@ -33,7 +34,7 @@ class LogicaNenLinea
             @gameTable.push(VACIO)
         end
         # Inicia el jugador X
-        @playerTurn = PLAYER_X
+        @playerTurn = @player_x
         @performedSteps = 0
         @gameState = PLAYING
         @winnerSteps.clear
@@ -57,7 +58,7 @@ class LogicaNenLinea
     end
 
     def changeTurn
-        @playerTurn = (@playerTurn == PLAYER_X) ? PLAYER_O : PLAYER_X
+        @playerTurn = (@playerTurn == @player_x) ? @player_o : @player_x
     end
 
     # Convierte un indice de 2D a 1D
@@ -425,7 +426,7 @@ class LogicaNenLinea
             posJugada = putCard(column)
             if verifyRow(posJugada) != 'no hay nada'
                 puts('Gano ' + @playerTurn)
-                @gameState = (@playerTurn == PLAYER_X) ? X_WINS : O_WINS
+                @gameState = (@playerTurn == @player_x) ? @player_x : @player_o
             else
                 @gameState = PLAYING
                 changeTurn

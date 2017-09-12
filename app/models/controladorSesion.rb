@@ -1,21 +1,21 @@
 require 'logica/logicaNenLinea'
-require_relative '../../app/jobs/nueva_sesion_job'
 
 class ControladorSesion
-
     @game = nil
-    @session_id
+    # Identificador del canal para esta sesion
+    @session_id = nil
+    @partidas = 0
 
-    def initialize(tamFila, tamTablero, n2win, session_id)
+    def initialize(tamFila, tamTablero, n2win, session_id, player_x, player_o)
         @session_id = session_id
-        nuevaSesion(tamFila, tamTablero, n2win)
+        nuevaSesion(tamFila, tamTablero, n2win, player_x, player_o)
     end
 
-    def nuevaSesion(tamFila, tamTablero, n2win)
-        @game = LogicaNenLinea.new(tamTablero, tamFila, n2win)
-
+    def nuevaSesion(tamFila, tamTablero, n2win, player_x, player_o)
+        @game = LogicaNenLinea.new(tamTablero, tamFila, n2win, player_x, player_o)
+        # Respuesta de verificacion al usuario
         ActionCable.server.broadcast "sesion_channel_#{@session_id}" , gameState: @game.gameState,
-                                          message: 'Nueva Partida',
+                                          action: 'Nueva Partida',
                                           tamTablero: tamTablero,
                                           tamFila: tamFila,
                                           n2win: n2win,
@@ -26,7 +26,7 @@ class ControladorSesion
         _fila, _columna = @game.play(columna)
         # Respuesta a los jugadores
         ActionCable.server.broadcast "sesion_channel_#{@session_id}", {
-            action: "mover",
+            action: "Mover",
             game_state: @game.gameState,
             fichas_ganadoras: @game.winnerSteps,
             movimientos: @game.performedSteps,
