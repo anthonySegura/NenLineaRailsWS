@@ -45,5 +45,6 @@ Rails.application.configure do
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
-  config.action_cable.allowed_request_origins = ['*','file://','https://nenlinea-react.herokuapp.com/' ,'http://localhost:3000','http://localhost:3002','http://localhost:8080', '172.24.41.145:3000']
+  config.action_cable.allowed_request_origins = ['*','file://','https://nenlinea-react.herokuapp.com/' ,'http://localhost:3000','http://localhost:3002','http://localhost:8080', '172.24.41.145:3000',
+                                                 '172.24.41.219:3000']
 end

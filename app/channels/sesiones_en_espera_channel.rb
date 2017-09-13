@@ -8,9 +8,4 @@ class SesionesEnEsperaChannel < ApplicationCable::Channel
 
 	end
 
-	def obtenerSesionesEnEspera
-		sesiones = Sesion.where(estado: 'esperando')
-		ActionCable.server.broadcast "sesiones_en_espera_channel", sesiones: sesiones
-	end
-
 end

@@ -76,7 +76,10 @@ class SesionChannel < ApplicationCable::Channel
 
   # Envia el mensaje al chat de la sesion
   def enviarMensaje(opts)
-    ActionCable.server.broadcast "sesion_channel_#{@session_id}", message: opts.fetch('message')
+    ActionCable.
+      server.
+      broadcast "sesion_channel_#{@session_id}",
+                 message: opts.fetch('message')
   end
 
 end

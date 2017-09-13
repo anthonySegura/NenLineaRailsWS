@@ -14,26 +14,31 @@ class ControladorSesion
     def nuevaSesion(tamFila, tamTablero, n2win, player_x, player_o)
         @game = LogicaNenLinea.new(tamTablero, tamFila, n2win, player_x, player_o)
         # Respuesta de verificacion al usuario
-        ActionCable.server.broadcast "sesion_channel_#{@session_id}" , gameState: @game.gameState,
-                                          action: 'Nueva Partida',
-                                          tamTablero: tamTablero,
-                                          tamFila: tamFila,
-                                          n2win: n2win,
-                                          status: 'SUCCESS'
+        ActionCable.
+          server.
+          broadcast "sesion_channel_#{@session_id}" ,
+                     gameState: @game.gameState,
+                     action: 'Nueva Partida',
+                     tamTablero: tamTablero,
+                     tamFila: tamFila,
+                     n2win: n2win,
+                     status: 'SUCCESS'
     end
 
     def mover(columna)
         _fila, _columna = @game.play(columna)
         # Respuesta a los jugadores
-        ActionCable.server.broadcast "sesion_channel_#{@session_id}", {
-            action: "Mover",
-            game_state: @game.gameState,
-            fichas_ganadoras: @game.winnerSteps,
-            movimientos: @game.performedSteps,
-            turno: @game.playerTurn,
-            fila: _fila,
-            columna: _columna
-            }
+        ActionCable.
+          server.
+          broadcast "sesion_channel_#{@session_id}",
+                     action: "Mover",
+                     game_state: @game.gameState,
+                     fichas_ganadoras: @game.winnerSteps,
+                     movimientos: @game.performedSteps,
+                     turno: @game.playerTurn,
+                     fila: _fila,
+                     columna: _columna
+
     end
 
     def getn2win
