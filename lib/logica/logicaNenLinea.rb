@@ -11,6 +11,7 @@ PLAYING, X_WINS, O_WINS, TIE = 'Playing', 'X WINS', 'O WINS', 'TIE'
 # TODO refactorizar
 class LogicaNenLinea
     # Getters para los atributos de lectura
+    attr_accessor :player_o
     attr_reader :gameState, :gameTable, :winnerSteps, :performedSteps, :playerTurn, :stepsToWin
     # Constructor de la clase
     def initialize(tableSize = 64, rowSize = 8, stepsToWin = 4, player_x = 'X', player_o = 'O')
@@ -429,8 +430,8 @@ class LogicaNenLinea
                 @gameState = (@playerTurn == @player_x) ? @player_x : @player_o
             else
                 @gameState = PLAYING
-                changeTurn
             end
+            changeTurn
             return posJugada.rowPosition, posJugada.columnPosition
         rescue Exception => e
             raise e

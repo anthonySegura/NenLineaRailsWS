@@ -2,11 +2,11 @@ require 'controladorSesion'
 
 class SesionChannel < ApplicationCable::Channel
 
-  # Controlador de la sesion
-  @controlador = nil
-  @session_id = nil
+  # Controladores de todas las sesiones
+  @@controladores = Hash.new
+  @controlador
+  @session_id
 
-  private
   # Funcion auxiliar para verificar las solicitudes de conexion
   # El tipo de conexión se envia como parametro con la llave :command
   # Hay 3 tipos de solicitud:
@@ -15,20 +15,35 @@ class SesionChannel < ApplicationCable::Channel
   #   * Restaurar una sesión pausada :command => restart
   # Devuelve el id de la sesión o -1 si no se puede realizar la conexión
   def verificarTipoSesion(params)
+	  puts('HAY VAN LOS PARAMETROS')
+	  puts(params)
     case params[:command]
       when 'new'
         # Crea una nueva sesion relacionada con el usuario
         user = User.find_by_name(params[:user_id])
-        # FIXME: obtener los parametros de la peticion y crear el controlador desde aqui
-        sesion = user.sesions.create(n_partidas: 1, tam_tablero: 8, tiempo_espera: 120, n2win: 4, tipo: 'pvp', estado: 'esperando')
+        sesion = user.sesions.create(n_partidas: params[:n_partidas],
+                                     tam_tablero: params[:tamFila],
+                                     tiempo_espera: 120,
+                                     n2win: params[:n2win],
+                                     tipo: params[:tipo],
+                                     estado: 'esperando'
+                                    )
         sesion.save
+        nuevaSesion(params, sesion.id)
         return sesion.id
 
       when 'join'
         # FIXME: agregar el usuario al controlador de la sesion en espera, Verificar la sesion antes
         sesion = Sesion.find(params[:sesion_id])
-        return sesion.id
-
+        user = User.find_by_name(params[:user])
+        if user != nil
+          @@controladores[sesion.id].player_o = user.name
+          @@controladores[sesion.id].iniciaPartida()
+          @controlador = @@controladores[sesion.id]
+          return sesion.id
+        end
+        puts('USUARIO NO IDENTIFICADO')
+        return -1
       when 'restart'
         # TODO: agregar logica para reiniciar sesion
         puts('restart')
@@ -40,34 +55,40 @@ class SesionChannel < ApplicationCable::Channel
   def subscribed
     @session_id = verificarTipoSesion(params)
     stream_from "sesion_channel_#{@session_id}"
+    if @session_id == -1
+      refuseConnection
+    end
   end
 
-  def unsubscribed;  end
+  def unsubscribed
 
-  def nuevaSesion(opts)
+  end
+
+  def refuseConnection
+    ActionCable.
+        server.
+        broadcast "sesion_channel_-1", action: 'refused'
+  end
+
+  def nuevaSesion(params, session_id)
       puts('CREAR SESION')
       @controlador = ControladorSesion.new(
-          opts.fetch('tamFila'),
-          opts.fetch('tamTablero'),
-          opts.fetch('n2win'),
-          @session_id,
-          'X',
-          'O'
+          params[:tamFila],
+          params[:tamFila],
+          params[:n2win],
+          session_id,
+          params[:user_id]
       )
+      @@controladores[session_id] = @controlador
   end
 
   def unirse
 
   end
 
-  # TODO: borrar despues
-  def getn2Win(opts)
-    puts(opts.fetch('id'))
-    @controlador.getn2win()
-  end
-
   def mover(opts)
-
+    #controlador = @@controladores[@session_id]
+    @controlador.mover(opts.fetch('columna'))
   end
 
   def pausarSesion(opts)
@@ -76,10 +97,13 @@ class SesionChannel < ApplicationCable::Channel
 
   # Envia el mensaje al chat de la sesion
   def enviarMensaje(opts)
+    puts('MENSAJE')
     ActionCable.
       server.
       broadcast "sesion_channel_#{@session_id}",
-                 message: opts.fetch('message')
+                 action: 'message',
+                 message: opts.fetch('message'),
+                 send_by: opts.fetch('send_by')
   end
 
 end
