@@ -15,8 +15,6 @@ class SesionChannel < ApplicationCable::Channel
   #   * Restaurar una sesión pausada :command => restart
   # Devuelve el id de la sesión o -1 si no se puede realizar la conexión
   def verificarTipoSesion(params)
-	  puts('HAY VAN LOS PARAMETROS')
-	  puts(params)
     case params[:command]
       when 'new'
         # Crea una nueva sesion relacionada con el usuario
@@ -87,7 +85,7 @@ class SesionChannel < ApplicationCable::Channel
   end
 
   def mover(opts)
-    #controlador = @@controladores[@session_id]
+    @controlador = @@controladores[@session_id]
     @controlador.mover(opts.fetch('columna'))
   end
 

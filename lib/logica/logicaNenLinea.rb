@@ -11,10 +11,10 @@ PLAYING, X_WINS, O_WINS, TIE = 'Playing', 'X WINS', 'O WINS', 'TIE'
 # TODO refactorizar
 class LogicaNenLinea
     # Getters para los atributos de lectura
-    attr_accessor :player_o
+    attr_accessor :player_o, :player_x
     attr_reader :gameState, :gameTable, :winnerSteps, :performedSteps, :playerTurn, :stepsToWin
     # Constructor de la clase
-    def initialize(tableSize = 64, rowSize = 8, stepsToWin = 4, player_x = 'X', player_o = 'O')
+    def initialize(tableSize = 64, rowSize = 8, stepsToWin = 4)
         @gameTable = []
         @playerTurn
         @performedSteps
@@ -23,15 +23,14 @@ class LogicaNenLinea
         @tableSize = tableSize
         @rowSize = rowSize
         @stepsToWin = stepsToWin
-        @player_x = player_x
-        @player_o = player_o
-        startGame
+        @player_x
+        @player_o
     end
 
     # Inicializa las estructuras internas de la clase
     def startGame
         # Se llena el arreglo con posiciones vacias
-        @tableSize.times do
+        (@tableSize).times do
             @gameTable.push(VACIO)
         end
         # Inicia el jugador X
@@ -49,6 +48,7 @@ class LogicaNenLinea
         end
         row = @rowSize - 1
         while row >= 0 do
+            puts(@gameTable[@rowSize * row + choosedColumn])
             if  @gameTable[@rowSize * row + choosedColumn] == VACIO
                 @gameTable[@rowSize * row + choosedColumn] = @playerTurn
                 @performedSteps += 1
@@ -424,8 +424,14 @@ class LogicaNenLinea
     # Recibe la columna del tablero
     def play(column)
         begin
+            puts('TURNO')
+            puts(@playerTurn)
             posJugada = putCard(column)
+            puts('POS JUGADA')
+            puts(posJugada.rowPosition)
+            puts(posJugada.columnPosition)
             if verifyRow(posJugada) != 'no hay nada'
+                puts('error esta aqui')
                 puts('Gano ' + @playerTurn)
                 @gameState = (@playerTurn == @player_x) ? @player_x : @player_o
             else
