@@ -48,7 +48,6 @@ class LogicaNenLinea
         end
         row = @rowSize - 1
         while row >= 0 do
-            puts(@gameTable[@rowSize * row + choosedColumn])
             if  @gameTable[@rowSize * row + choosedColumn] == VACIO
                 @gameTable[@rowSize * row + choosedColumn] = @playerTurn
                 @performedSteps += 1
@@ -424,12 +423,7 @@ class LogicaNenLinea
     # Recibe la columna del tablero
     def play(column)
         begin
-            puts('TURNO')
-            puts(@playerTurn)
             posJugada = putCard(column)
-            puts('POS JUGADA')
-            puts(posJugada.rowPosition)
-            puts(posJugada.columnPosition)
             if verifyRow(posJugada) != 'no hay nada'
                 puts('error esta aqui')
                 puts('Gano ' + @playerTurn)

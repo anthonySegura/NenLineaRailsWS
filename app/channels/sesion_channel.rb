@@ -4,7 +4,9 @@ class SesionChannel < ApplicationCable::Channel
 
   # Controladores de todas las sesiones
   @@controladores = Hash.new
+  # Controlador de sesión para esta conexión
   @controlador
+  # Identificador para la sesion
   @session_id
 
   # Funcion auxiliar para verificar las solicitudes de conexion
@@ -13,9 +15,11 @@ class SesionChannel < ApplicationCable::Channel
   #   * Crear una nueva sesión :command => new
   #   * Unirse a una sesión creada :command => join
   #   * Restaurar una sesión pausada :command => restart
+  #   * Para jugar contra la maquina :command => IA
   # Devuelve el id de la sesión o -1 si no se puede realizar la conexión
   def verificarTipoSesion(params)
     case params[:command]
+      # Conexión para el usuario creador
       when 'new'
         # Crea una nueva sesion relacionada con el usuario
         user = User.find_by_name(params[:user_id])
@@ -30,21 +34,34 @@ class SesionChannel < ApplicationCable::Channel
         nuevaSesion(params, sesion.id)
         return sesion.id
 
+      # Conexión para el usuario invitado
       when 'join'
-        # FIXME: agregar el usuario al controlador de la sesion en espera, Verificar la sesion antes
         sesion = Sesion.find(params[:sesion_id])
         user = User.find_by_name(params[:user])
         if user != nil
-          @@controladores[sesion.id].player_o = user.name
-          @@controladores[sesion.id].iniciaPartida()
-          @controlador = @@controladores[sesion.id]
+          agregarUsuario(sesion.id, user)
           return sesion.id
         end
-        puts('USUARIO NO IDENTIFICADO')
         return -1
+      # En caso de querer restaurar una sesión.
+      # Se trae la sesión desde la base de datos para despues reiniciar el juego con la configuración con la que se pauso
       when 'restart'
         # TODO: agregar logica para reiniciar sesion
         puts('restart')
+      # Conexión para jugar contra el jugador automático
+      # Se crea un controlador de sesión indicando que el tipo de juego va a ser automático
+      when 'IA'
+        user = User.find_by_name(params[:user_id])
+        sesion = user.sesions.create(n_partidas: params[:n_partidas],
+                                     tam_tablero: params[:tamFila],
+                                     tiempo_espera: 120,
+                                     n2win: params[:n2win],
+                                     tipo: params[:tipo],
+                                     estado: 'jugando'
+        )
+        sesion.save
+        nuevaSesionIA(params, sesion.id, ia: true, nivel: 'facil')
+        return sesion.id
       else
         return -1
     end
@@ -80,13 +97,33 @@ class SesionChannel < ApplicationCable::Channel
       @@controladores[session_id] = @controlador
   end
 
-  def unirse
-
+  def nuevaSesionIA(params, session_id, **iaOptions)
+    puts('CREAR SESION IA')
+    @controlador = ControladorSesion.new(
+      params[:tamFila],
+      params[:tamFila],
+      params[:n2win],
+      session_id,
+      params[:user_id],
+      iaOptions
+    )
+    @controlador.iniciarSesionIA()
   end
+
+  def agregarUsuario(sesion_id, user)
+    @@controladores[sesion_id].player_o = user.name
+    @@controladores[sesion_id].iniciarSesion()
+    @controlador = @@controladores[sesion_id]
+  end
+
 
   def mover(opts)
     @controlador = @@controladores[@session_id]
     @controlador.mover(opts.fetch('columna'))
+  end
+
+  def moverIA(opts)
+    @controlador.moverIA(opts.fetch('columna'))
   end
 
   def pausarSesion(opts)
