@@ -37,7 +37,7 @@ class LogicaNenLinea
         @playerTurn = @player_x
         @performedSteps = 0
         @gameState = PLAYING
-        @winnerSteps.clear
+        @winnerSteps = []
     end
 
     # Recibe la columna del tablero y 'deja caer' la ficha

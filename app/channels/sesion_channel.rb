@@ -2,22 +2,23 @@ require 'controladorSesion'
 
 class SesionChannel < ApplicationCable::Channel
 
-  # Controladores de todas las sesiones
+  # Diccionario para almacenar los controladores de todas las sesiones
   @@controladores = Hash.new
   # Controlador de sesión para esta conexión
   @controlador
   # Identificador para la sesion
   @session_id
 
-  # Funcion auxiliar para verificar las solicitudes de conexion
-  # El tipo de conexión se envia como parametro con la llave :command
-  # Hay 3 tipos de solicitud:
-  #   * Crear una nueva sesión :command => new
-  #   * Unirse a una sesión creada :command => join
-  #   * Restaurar una sesión pausada :command => restart
-  #   * Para jugar contra la maquina :command => IA
-  # Devuelve el id de la sesión o -1 si no se puede realizar la conexión
   def verificarTipoSesion(params)
+	  ##
+	  # Funcion auxiliar para verificar las solicitudes de conexion
+	  # El tipo de conexión se envia como parametro con la llave :command
+	  # Hay 3 tipos de solicitud:
+	  #   * Crear una nueva sesión :command => new
+	  #   * Unirse a una sesión creada :command => join
+	  #   * Restaurar una sesión pausada :command => restart
+	  #   * Para jugar contra la maquina :command => IA
+	  # Devuelve el id de la sesión o -1 si no se puede realizar la conexión
     case params[:command]
       # Conexión para el usuario creador
       when 'new'
@@ -39,7 +40,7 @@ class SesionChannel < ApplicationCable::Channel
         sesion = Sesion.find(params[:sesion_id])
         user = User.find_by_name(params[:user])
         if user != nil
-          agregarUsuario(sesion.id, user)
+          agregarUsuarioASesion(sesion.id, user)
           return sesion.id
         end
         return -1
@@ -110,7 +111,7 @@ class SesionChannel < ApplicationCable::Channel
     @controlador.iniciarSesionIA()
   end
 
-  def agregarUsuario(sesion_id, user)
+  def agregarUsuarioASesion(sesion_id, user)
     @@controladores[sesion_id].player_o = user.name
     @@controladores[sesion_id].iniciarSesion()
     @controlador = @@controladores[sesion_id]
