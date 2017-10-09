@@ -57,6 +57,16 @@ class LogicaNenLinea
         end
     end
 
+    def posicionesVacias
+        pos = 0
+        @gameTable.each do |i|
+            if i == VACIO
+                pos += 1
+            end
+        end
+       return pos
+    end
+
     def changeTurn
         @playerTurn = (@playerTurn == @player_x) ? @player_o : @player_x
     end
@@ -425,9 +435,10 @@ class LogicaNenLinea
         begin
             posJugada = putCard(column)
             if verifyRow(posJugada) != 'no hay nada'
-                puts('error esta aqui')
                 puts('Gano ' + @playerTurn)
                 @gameState = (@playerTurn == @player_x) ? @player_x : @player_o
+            elsif posicionesVacias == 0
+                @gameState = TIE
             else
                 @gameState = PLAYING
             end

@@ -14,6 +14,7 @@ Rails.application.routes.draw do
 
     post 'user/delete'
 
+    get '/user/puntuacion/:name' => 'user#userRank'
     # Ruta para consultar el ranking
     get '/ranking' => 'user#ranking'
 

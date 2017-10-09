@@ -19,7 +19,7 @@ class RandomPlayer
 
 	def mover
 		columnasValidas = getValidColumns
-		return columnasValidas[rand(@filas)]
+		return columnasValidas[rand(columnasValidas.length)]
 	end
 
 end

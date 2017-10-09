@@ -2,6 +2,9 @@
 require 'logica/logicaNenLinea'
 # lib/jugadorAutomatico
 require 'jugadorAutomatico/randomPlayer'
+require 'jugadorAutomatico/defensivePlayer'
+# models/categorias
+require 'categorias'
 
 ##
 # Controlador de sesiones
@@ -16,7 +19,7 @@ class ControladorSesion
 		@session_id = nil
 		@partidas = 0
 
-		
+
     def initialize(tamFila, tamTablero, n2win, session_id, player_x, **iaOptions)
         @session_id = session_id
         @player_x = player_x
@@ -24,6 +27,9 @@ class ControladorSesion
         @tamTablero = tamTablero
         @tamFila = tamFila
         @n2win = n2win
+        @session =  Sesion.find(session_id)
+        @partidas = @session.n_partidas
+
         if iaOptions[:ia]
             @player_o = 'CPU'
         end
@@ -78,28 +84,38 @@ class ControladorSesion
         # Respuesta a los jugadores
         transmitirJugada(@game, _fila, _columna)
 	      if @game.gameState != 'Playing'
+					@partidas -= 1
+		      asignarPuntos(@player_x, player_o, @game.gameState)
 		      sleep(4)
 		      nuevaSesion(@tamFila, @tamTablero, @n2win, @player_x)
 		      @game.player_x = @player_x
 		      @game.player_o = @player_o
-		      ActionCable.
+		      if @partidas > 0
+			      ActionCable.
 				      server.
 				      broadcast "sesion_channel_#{@session_id}",
-				                 action: "Restart",
-				                 won: @game.gameState
-		      @game.startGame
-		      ActionCable.
-			      server.
-			      broadcast "sesion_channel_#{@session_id}" ,
-			                game_state: @game.gameState,
-			                action: 'Nueva Partida',
-			                tamTablero: @tamTablero * @tamTablero,
-			                tamFila: @tamFila,
-			                n2win: @n2win,
-			                status: 'SUCCESS',
-			                turno: @player_x,
-			                player_x: @player_x,
-			                player_o: @player_o
+				                action: "Restart",
+				                won: @game.gameState
+			      @game.startGame
+			      ActionCable.
+				      server.
+				      broadcast "sesion_channel_#{@session_id}" ,
+				                game_state: @game.gameState,
+				                action: 'Nueva Partida',
+				                tamTablero: @tamTablero * @tamTablero,
+				                tamFila: @tamFila,
+				                n2win: @n2win,
+				                status: 'SUCCESS',
+				                turno: @player_x,
+				                player_x: @player_x,
+				                player_o: @player_o
+		      else
+			      ActionCable
+			        .server
+			        .broadcast "sesion_channel_#{@session_id}",
+			                   action: 'Game Over'
+			      Categorias.new.calcularRanking
+		      end
 	       end
     end
 
@@ -114,8 +130,8 @@ class ControladorSesion
 	    transmitirJugada(@game, _fila, _columna)
 	    if @game.gameState == 'Playing'
 		    # Jugada de la maquina
-		    randomColumn = RandomPlayer.new(@game.gameTable, @tamFila).mover
-		    filaM, columnaM = @game.play(randomColumn)
+		    iaColumn = DefensivePlayer.new(@game.gameTable ,@tamFila, columna).mover
+		    filaM, columnaM = @game.play(iaColumn)
 		    # Transmitir jugada maquina
 		    transmitirJugada(@game, filaM, columnaM)
 	    end
@@ -138,5 +154,32 @@ class ControladorSesion
                         fila: fila,
                         columna: columna
     end
+
+		def calcularPuntaje(pts_nuestros, pts_adversario)
+			pts_nuestros = (pts_nuestros <= 0) ? 10 : pts_nuestros
+			pts_adversario = (pts_adversario <= 0) ? 10 : pts_adversario
+			score = -Math.log(1 - (1 / (1 + Math.exp(-(pts_adversario / pts_nuestros)))))
+			return (score.infinite?) ? 100 : score * 10
+		end
+
+	  def asignarPuntos(jugador1, jugador2, ganador)
+		  j1 = User.find_by_name(jugador1)
+		  j2 = User.find_by_name(jugador2)
+
+		  if ganador == jugador1
+			  j1.puntuacion += calcularPuntaje(j1.puntuacion, j2.puntuacion)
+			  j1.save
+
+		  elsif ganador == jugador2
+			  j2.puntuacion += calcularPuntaje(j2.puntuacion, j1.puntuacion)
+			  j2.save
+
+		  else
+			  j1.puntuacion += 1
+			  j2.puntuacion += 1
+			  j1.save
+			  j2.save
+		  end
+	  end
 
 end

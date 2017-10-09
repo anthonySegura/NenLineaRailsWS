@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170910232607) do
+ActiveRecord::Schema.define(version: 20171009030117) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(version: 20170910232607) do
     t.integer "categoria"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "puntos", default: 0
   end
 
   create_table "usuarios", force: :cascade do |t|

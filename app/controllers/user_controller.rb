@@ -64,8 +64,18 @@ class UserController < ApplicationController
     end
   end
 
+  def userRank
+    begin
+      @user = User.find_by_name(params[:name])
+      render :json => {:status => :ok, :score => @user.puntuacion, :rank => @user.categoria}
+    rescue Exception => e
+      render :json => {:status => :error, :message => e}
+    end
+  end
+
   def ranking
-    render :json => {:status => :ok, :ranking => []}
+    @ranking = User.all.select(:name, :nickname, :categoria, :puntuacion, :id).order(:puntuacion).reverse_order
+    render :json => {:status => :ok, :ranking => @ranking}
   end
 
   def user_params
