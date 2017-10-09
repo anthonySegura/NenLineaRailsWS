@@ -1,18 +1,21 @@
 Rails.application.routes.draw do
 
-  # Ruta para los websockets
-  mount ActionCable.server => '/cable'
+    # Ruta para los websockets
+    mount ActionCable.server => '/cable'
 
-  # Rutas para el crud de usuarios
-  get 'user/index'
+    # Rutas para el crud de usuarios
+    get 'user/index'
 
-  get 'user/show'
+    get 'user/show'
 
-  post 'user/create'
+    post 'user/create'
 
-  post 'user/update'
+    post 'user/update'
 
-  post 'user/delete'
+    post 'user/delete'
+
+    # Ruta para consultar el ranking
+    get '/ranking' => 'user#ranking'
 
     # Rutas del controlador logica
     # Muestra los endpoints del controlador logica
@@ -21,7 +24,6 @@ Rails.application.routes.draw do
     # Mover ficha
     get '/logica/mover/:columna' => 'logica#mover'
 
-    # TODO agregar parametro para crear partida contra el jugador automatico
     # Iniciar juego, GET por mientras, se deberia pasar a POST o algo asi
     get '/logica/new/:tamF/:n2w' => 'logica#newGame'
 

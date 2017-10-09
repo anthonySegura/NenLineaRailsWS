@@ -2,8 +2,6 @@
 require 'logica/logicaNenLinea'
 # lib/jugadorAutomatico
 require 'jugadorAutomatico/randomPlayer'
-require 'jugadorAutomatico/AI'
-require 'jugadorAutomatico/Board'
 
 ##
 # Controlador de sesiones
@@ -116,12 +114,7 @@ class ControladorSesion
 	    transmitirJugada(@game, _fila, _columna)
 	    if @game.gameState == 'Playing'
 		    # Jugada de la maquina
-		    #randomColumn = RandomPlayer.new(@game.gameTable, @tamFila).mover
-		     ai = AI.new(@player_x, @player_o, 5, @n2win)
-		     board = Board.construct(@tamFila, @tamFila)
-		     board.setBoard(@game.gameTable, @tamFila)
-		     randomColumn = ai.next_move(board)
-		    puts('Jugada CPU', randomColumn)
+		    randomColumn = RandomPlayer.new(@game.gameTable, @tamFila).mover
 		    filaM, columnaM = @game.play(randomColumn)
 		    # Transmitir jugada maquina
 		    transmitirJugada(@game, filaM, columnaM)

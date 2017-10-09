@@ -64,6 +64,10 @@ class UserController < ApplicationController
     end
   end
 
+  def ranking
+    render :json => {:status => :ok, :ranking => []}
+  end
+
   def user_params
     params.permit(:name, :nickname, :password, :email, :puntuacion, :categoria)
   end
