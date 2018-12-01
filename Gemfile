@@ -9,7 +9,7 @@ gem 'minitest', '~> 5.10.3'
 
 gem 'active_model_serializers', '~> 0.10.0'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.1.3'
+gem 'rails', '~> 5.1.6', '>= 5.1.6.1'
 # Use sqlite3 as the database for Active Record
 #gem 'sqlite3'
 #gem 'mysql2'
